@@ -3,7 +3,6 @@ import { Repository } from 'typeorm';
 import { Accounts } from './entities/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAccountDTO } from './dto/create-account.dto';
-import { UpdateAccountDTO } from './dto/update-account.dto';
 
 @Injectable()
 export class AccountsService {
@@ -31,20 +30,5 @@ export class AccountsService {
       where: {accountid: id}
     });
   }
-
-  update(id: number, updateAccountDTO: UpdateAccountDTO) {
-    return `This action updates a #${id} account`;
-  }
-
-  // async editNote(id: number, updateAccountDTO: UpdateAccountDTO): Promise<Accounts> {
-  //   const editedAccount = await this.accountsRepository.update(id, updateAccountDTO);
-  //   if (!editedAccount) {
-  //     throw new NotFoundException('Account is not found');
-  //   }
-  //   editedAccount.balance: = this.balance;
-  //   editedAccount.customerID = this.customerID;
-  //   await editedNote.save();
-  //   return editedNote;
-  // }
 
 }

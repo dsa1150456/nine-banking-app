@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Accounts } from './accounts/entities/account.entity';
 import { Users } from './users/entities/user.entity';
-import { Transaction } from './transactions/entities/transaction.entity';
+import { Transactions } from './transactions/entities/transaction.entity';
 import { TransactionsModule } from './transactions/transactions.module';
 import { UsersModule } from './users/users.module';
 import { AccountsModule } from './accounts/accounts.module';
@@ -19,7 +19,7 @@ import { AuthModule } from './auth/auth.module';
       username: 'root',
       password: 'dsa1150456',
       database: 'nine_bank',
-      entities: [Users,Accounts,Transaction],
+      entities: [Users,Accounts,Transactions],
       synchronize: false,
       autoLoadEntities: true
     }),

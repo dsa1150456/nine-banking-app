@@ -1,34 +1,34 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
-import { CreateTransactionDto } from './dto/create-transaction.dto';
-// import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { CreateTransactionDTO } from './dto/create-transaction.dto';
+// import { UpdateTransactionDTO } from './dto/update-transaction.dto';
 
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
-
-  @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
-  }
 
   @Get()
   findAll() {
     return this.transactionsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
+  @Get('byuser/:id')
+  findByUserId(@Param('userid') userid: number) {
+    return this.transactionsService.findByUserId(userid);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-  //   return this.transactionsService.update(+id, updateTransactionDto);
-  // }
+  @Post()
+  transactionHandle(@Body() transaction: CreateTransactionDTO) {
+    if (transaction.transaction_type == "deposit") {
+      return this.transactionsService.deposit(transaction);
+    }
+    if (transaction.transaction_type == "withdraw") { 
+      return this.transactionsService.withdraw(transaction);;
+    }
+    if (transaction.transaction_type == "transfer_received" || transaction.transaction_type == "transfer_sended" ) {
+      return this.transactionsService.transfer(transaction);
+    }
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.transactionsService.remove(+id);
-  // }
+  
 }
