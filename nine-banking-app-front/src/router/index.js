@@ -3,7 +3,7 @@ import {
   createWebHistory
 } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import Service from '../views/Service.vue'
+import ServiceView from '../views/ServiceView.vue'
 import Login from '../views/Login.vue'
 import NotFound from '../views/NotFound.vue'
 import SignUp from '../views/SignUp.vue'
@@ -28,7 +28,7 @@ const router = createRouter({
     {
       path: '/service',
       name: 'service',
-      component: Service
+      component: ServiceView
     },
     {
       path: '/:catchNotMatchPath(.*)',

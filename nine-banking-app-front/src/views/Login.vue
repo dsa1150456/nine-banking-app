@@ -9,7 +9,7 @@ const goSignUp = () => appRouter.push({ name: "sign-up" });
 <template>
   <div class="container mr-auto ml-auto pr-auto pl-auto">
     <div
-      class="columns sm:flex-col md:flex md:flex-row justify-center items-center text-center min-h-[90vh]"
+      class="columns sm:flex-col md:flex md:flex-row justify-center items-center text-center min-h-[80vh]"
     >
       <div class="md:w-3/5">
         <img src="../assets/images/logo.png" />
@@ -71,7 +71,7 @@ const goSignUp = () => appRouter.push({ name: "sign-up" });
           <span
             @click="goSignUp()"
             class="text-gray-700 underline hover:text-[#7474fc] cursor-pointer"
-            >ยังไม่มีรหัสธนาคาร?</span
+            >ยังไม่มีรหัส?</span
           >
         </p>
       </div>

@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <header>
+  <nav>
     <div class="relative z-20 border-b bg-white">
       <div class="px-6 md:px-12 lg:container lg:mx-auto lg:px-6 lg:py-4">
         <div class="flex items-center justify-between">
@@ -79,7 +79,7 @@
         </div>
       </div>
     </div>
-  </header>
+  </nav>
 </template>
 
 <style>
