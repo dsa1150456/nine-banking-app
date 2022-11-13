@@ -1,24 +1,30 @@
 <script setup>
-import { ref, computed } from "vue";
+import { toRef, ref, computed } from "vue";
 import axios from "axios";
 import config from "@/config";
 import Swal from "sweetalert2/dist/sweetalert2.all.min.js";
 import Banking from "./Modal/Banking.vue";
-import { useRouter } from "vue-router";
-const appRouter = useRouter();
-defineEmits(["createAccount"]);
+const emit = defineEmits(["createAccount", "getAccountDataSelected"]);
 const props = defineProps({
   accounts: {
     type: Array,
   },
   selectedAccount: {
     type: Object,
+    default: {},
   },
 });
 const interest = computed(() => {
   const interestPerYear = (props.selectedAccount.balance * 0.02 * 180) / 365;
   return interestPerYear.toFixed(2);
 });
+
+const selectedAccountId = computed(() => {
+  return {
+    accountid: props.selectedAccount.accountid,
+  };
+});
+
 const openModal = ref(false);
 const depositMode = ref(false);
 const withdrawMode = ref(false);
@@ -45,7 +51,7 @@ const depositBalance = async (amount) => {
         confirmButtonText: "OK",
       }).then((result) => {
         if (result.isConfirmed) {
-          appRouter.go();
+          emit("getAccountDataSelected", selectedAccountId.value.accountid);
         }
       })
     )
@@ -73,7 +79,7 @@ const withdrawBalance = async (amount) => {
         confirmButtonText: "OK",
       }).then((result) => {
         if (result.isConfirmed) {
-          appRouter.go();
+          emit("getAccountDataSelected", selectedAccountId.value.accountid);
         }
       })
     )
@@ -103,7 +109,7 @@ const transferBalance = async (payload) => {
         confirmButtonText: "OK",
       }).then((result) => {
         if (result.isConfirmed) {
-          appRouter.go();
+          emit("getAccountDataSelected", selectedAccountId.value.accountid);
         }
       })
     )
@@ -127,8 +133,24 @@ const transferBalance = async (payload) => {
       </button>
     </div>
     <div v-else>
-      <div class="flex flex-col justify-center items-center mb-2">
-        เลขบัญชี : {{ props.selectedAccount.accountid }}
+      <div class="flex flex-row justify-center items-center mb-2">
+        เลขบัญชี :
+        <select
+          v-if="props.accounts"
+          class="ml-1 border border-gray-400 hover:border-gray-500 rounded shadow focus:outline-none focus:border-[#2929a8]"
+          v-model="selectedAccountId.accountid"
+          @change="$emit('getAccountDataSelected', selectedAccountId.accountid)"
+        >
+          <option v-for="account in props.accounts" :value="account.accountid">
+            {{ account.accountid }}
+          </option>
+        </select>
+        <button
+          @click="$emit('createAccount')"
+          class="ml-2 text-green-400 hover:text-green-800 font-bold"
+        >
+          <span>+</span>
+        </button>
       </div>
     </div>
     <div

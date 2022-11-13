@@ -1,5 +1,7 @@
 <script setup>
-import moment from "moment-timezone";
+import Moment from "moment";
+import { extendMoment } from "moment-range";
+const moment = extendMoment(Moment);
 const props = defineProps({
   selectedAccount: {
     type: Object,

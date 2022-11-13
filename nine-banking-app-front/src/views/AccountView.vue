@@ -12,27 +12,40 @@ const appRouter = useRouter();
 const profile = getProfileData();
 const transactions = ref([]);
 const accounts = ref([]);
-const selectedAccount = ref({});
+const selectedAccount = ref(null);
+const getAccountDataSelected = async (accountid) => {
+  await axios
+    .get(`${config.apiUrl}/accounts/` + accountid)
+    .then((response) => {
+      selectedAccount.value = response.data;
+      console.log(selectedAccount.value);
+      console.log(response);
+    })
+    .then(await getTransactionData(accountid))
+    .catch((error) => {
+      console.log(error);
+    });
+};
 const getAccountData = async () => {
   await axios
     .get(`${config.apiUrl}/accounts/byuser/` + profile.value.userid)
     .then((response) => {
       accounts.value = response.data;
-      selectedAccount.value = accounts.value[0];
-      console.log(selectedAccount.value);
+      if (!selectedAccount.value) {
+        selectedAccount.value = response.data[0];
+        getTransactionData(selectedAccount.value.accountid);
+      }
       console.log(response);
     })
+    .then()
     .catch((error) => {
       console.log(error);
     });
 };
 
-const getTransactionData = async () => {
+const getTransactionData = async (accountid) => {
   await axios
-    .get(
-      `${config.apiUrl}/transactions/byaccount/` +
-        selectedAccount.value.accountid
-    )
+    .get(`${config.apiUrl}/transactions/byaccount/` + accountid)
     .then((response) => {
       transactions.value = response.data;
       console.log(transactions.value);
@@ -76,7 +89,6 @@ const createAccount = async () => {
 };
 onBeforeMount(async () => {
   await getAccountData();
-  await getTransactionData();
 });
 </script>
 
@@ -94,6 +106,7 @@ onBeforeMount(async () => {
       <Account
         :accounts="accounts"
         :selectedAccount="selectedAccount"
+        @getAccountDataSelected="getAccountDataSelected($event)"
         @createAccount="createAccount()"
       />
     </div>
