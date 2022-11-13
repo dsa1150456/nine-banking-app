@@ -3,10 +3,13 @@ import {
   createWebHistory
 } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import ServiceView from '../views/ServiceView.vue'
+import AccountView from '../views/AccountView.vue'
 import Login from '../views/Login.vue'
 import NotFound from '../views/NotFound.vue'
 import SignUp from '../views/SignUp.vue'
+import {
+  checkData
+} from "../service/profile";
 const router = createRouter({
   history: createWebHistory(
     import.meta.env.BASE_URL),
@@ -26,9 +29,9 @@ const router = createRouter({
       component: SignUp
     },
     {
-      path: '/service',
-      name: 'service',
-      component: ServiceView
+      path: '/account',
+      name: 'account',
+      component: AccountView
     },
     {
       path: '/:catchNotMatchPath(.*)',
@@ -38,4 +41,20 @@ const router = createRouter({
   ]
 })
 
+const isLogin = checkData();
+
+// guard route
+router.beforeEach(async (to, from) => {
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  if (to.name === "login" && isLogin.value) {
+    return {
+      name: "home"
+    };
+  }
+  if (to.name === "account" && !isLogin.value) {
+    return {
+      name: "home"
+    };
+  }
+})
 export default router

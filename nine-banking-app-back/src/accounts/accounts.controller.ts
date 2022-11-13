@@ -17,9 +17,14 @@ export class AccountsController {
     return this.accountsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.accountsService.findOne(+id);
+  @Get(':accountid')
+  findOne(@Param('accountid') accountid: number) {
+    return this.accountsService.findOne(accountid);
+  }
+  
+  @Get('byuser/:id')
+  findByUserId(@Param('userid') userid: number) {
+    return this.accountsService.findByUserId(userid);
   }
   
   @Delete(':id')

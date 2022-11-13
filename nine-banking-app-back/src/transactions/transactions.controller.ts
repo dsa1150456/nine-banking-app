@@ -12,9 +12,9 @@ export class TransactionsController {
     return this.transactionsService.findAll();
   }
 
-  @Get('byuser/:id')
-  findByUserId(@Param('userid') userid: number) {
-    return this.transactionsService.findByUserId(userid);
+  @Get('byaccount/:accountid')
+  findByAccountId(@Param('accountid') accountid: number) {
+    return this.transactionsService.findByAccountId(accountid);
   }
 
   @Post()
@@ -25,7 +25,7 @@ export class TransactionsController {
     if (transaction.transaction_type == "withdraw") { 
       return this.transactionsService.withdraw(transaction);;
     }
-    if (transaction.transaction_type == "transfer_received" || transaction.transaction_type == "transfer_sended" ) {
+    if (transaction.transaction_type == "transfer") {
       return this.transactionsService.transfer(transaction);
     }
   }

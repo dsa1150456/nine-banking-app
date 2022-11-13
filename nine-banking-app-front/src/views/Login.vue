@@ -1,9 +1,39 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import axios from "axios";
+import config from "@/config";
+import Swal from "sweetalert2/dist/sweetalert2.all.min.js";
+
 const showPassword = ref(false);
 const appRouter = useRouter();
 const goSignUp = () => appRouter.push({ name: "sign-up" });
+const loginUser = async () => {
+  await axios
+    .post(`${config.apiUrl}/users/login`, {
+      username: username.value,
+      password: password.value,
+    })
+    .then((response) => {
+      localStorage.setItem("profile", JSON.stringify(response.data));
+      Swal.fire({
+        title: "เข้าสู่ระบบสำเร็จ!",
+        text: "กดปุ่มเพื่อไปหน้าบัญชี!",
+        icon: "success",
+        confirmButtonText: "ไปต่อ",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          appRouter.go();
+        }
+      });
+    })
+    .catch((error) => {
+      Swal.fire("ข้อมูลไม่ถูกต้อง", "ชื่อผู้ใช้หรือรหัสผ่านผิดพลาด", "error");
+      console.log(error);
+    });
+};
+const username = ref("");
+const password = ref("");
 </script>
 
 <template>
@@ -21,12 +51,13 @@ const goSignUp = () => appRouter.push({ name: "sign-up" });
               ลงชื่อเข้าใช้งาน
             </h1>
           </div>
-          <form class="mb-4 space-y-4" @submit.prevent="signInUser()">
+          <form class="mb-4 space-y-4" @submit.prevent="loginUser()">
             <label class="block">
               <input
                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:border-indigo-800"
-                type="email"
-                v-model="email"
+                type="text"
+                v-model="username"
+                maxlength="20"
                 placeholder="ชื่อผู้ใช้"
                 inputmode="email"
                 required
@@ -38,7 +69,9 @@ const goSignUp = () => appRouter.push({ name: "sign-up" });
                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-indigo-800"
                   :type="showPassword == true ? 'text' : 'password'"
                   v-model="password"
-                  autocomplete="false"
+                  maxlength="14"
+                  minlength="8"
+                  autocomplete="off"
                   placeholder="รหัสผ่าน"
                   required
                 />
@@ -56,9 +89,6 @@ const goSignUp = () => appRouter.push({ name: "sign-up" });
                 </div>
               </div>
             </label>
-            <p v-if="hasErrors" class="text-sm text-red-500 font-normal">
-              *Incorrect email address or password.
-            </p>
             <button
               type="submit"
               class="w-full py-3 mt-1 text-white bg-[#7474fc] hover:bg-[#2929a8] focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm"

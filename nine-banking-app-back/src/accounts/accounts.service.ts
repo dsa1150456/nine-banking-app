@@ -24,11 +24,13 @@ export class AccountsService {
     return "Account ID #" + id + " successfully deleted";
   }
 
-  findOne(id: number) {
-    return this.accountsRepository.findOne({
-      select: ['accountid','userid','balance'],
-      where: {accountid: id}
-    });
+  async findOne(accountid: number) : Promise<Accounts> {
+    return await this.accountsRepository.findOneBy({accountid});
   }
 
+  async findByUserId(userid: number): Promise<Accounts[]> {
+    return await this.accountsRepository.find({ 
+      where: {userid},
+    })
+  };
 }

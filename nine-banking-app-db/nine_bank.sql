@@ -50,8 +50,8 @@ DROP TABLE IF EXISTS `nine_bank`.`transactions`;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `nine_bank`.`transactions` (
   `transactionid` INT NOT NULL AUTO_INCREMENT,
-  `from_account_id` INT,
-  `to_account_id` INT NOT NULL,
+  `from_account_id` INT NOT NULL,
+  `to_account_id` INT,
   `note` VARCHAR(50) NULL,
   `transaction_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `transaction_type` VARCHAR(45) NOT NULL,

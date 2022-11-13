@@ -17,7 +17,7 @@ export class TransactionsService {
   
   async deposit(createTransactionDTO: CreateTransactionDTO) {
     const accounts = await this.accountsRepository.findOne({
-      where: { accountid: createTransactionDTO.to_account_id }
+      where: { accountid: createTransactionDTO.from_account_id }
     });
     accounts.balance += createTransactionDTO.transaction_amount;
     this.accountsRepository.save(accounts);
@@ -27,11 +27,11 @@ export class TransactionsService {
 
   async withdraw(createTransactionDTO: CreateTransactionDTO) {
     const accounts = await this.accountsRepository.findOne({
-      where: { accountid: createTransactionDTO.to_account_id }
+      where: { accountid: createTransactionDTO.from_account_id }
     });
     if (accounts.balance < createTransactionDTO.transaction_amount) {
-      throw new BadRequestException('cannot withdraw, not enough balance ' + 'remaining balance: ' + accounts.balance +
-        ' withdraw amount: ' + createTransactionDTO.transaction_amount)
+      throw new BadRequestException('ไม่สามารถถอนเงินได้ ' + 'ยอดเงินคงเหลือ: ' + accounts.balance +
+        ' ยอดเงินที่ต้องการถอน:' + createTransactionDTO.transaction_amount)
     }
     accounts.balance -= createTransactionDTO.transaction_amount;
     this.accountsRepository.save(accounts);
@@ -41,31 +41,25 @@ export class TransactionsService {
 
   async transfer(createTransactionDTO: CreateTransactionDTO) {
     const mainAccount = await this.accountsRepository.findOne({
-      where: { accountid: createTransactionDTO.to_account_id }
-    });
-    const otherAccount = await this.accountsRepository.findOne({
       where: { accountid: createTransactionDTO.from_account_id }
     });
+    if (await this.accountExists(createTransactionDTO.to_account_id) == false) {
+        throw new BadRequestException("ไม่มีบัญชีที่จะโอนให้")
+    } 
+    const otherAccount = await this.accountsRepository.findOne({
+        where: { accountid: createTransactionDTO.to_account_id }
+    })
+    ;
     if (mainAccount.accountid == otherAccount.accountid) {
        throw new BadRequestException("โอนให้ตัวเองไม่ได้นะครับ")
     }
-    if (createTransactionDTO.transaction_type == "transfer_received") {
-      if (otherAccount.balance < createTransactionDTO.transaction_amount) {
-        throw new BadRequestException('cannot withdraw, not enough balance ' + 'other Account balance: ' + otherAccount.balance +
-          ' withdraw amount: ' + createTransactionDTO.transaction_amount)
-      }
-      mainAccount.balance = mainAccount.balance + createTransactionDTO.transaction_amount;
-      otherAccount.balance = otherAccount.balance - createTransactionDTO.transaction_amount;
-    }
-    if (createTransactionDTO.transaction_type == "transfer_sended") {
-      if (mainAccount.balance < createTransactionDTO.transaction_amount) {
-        throw new BadRequestException('cannot withdraw, not enough balance ' + 'main Account balance: ' + mainAccount.balance +
-          ' withdraw amount: ' + createTransactionDTO.transaction_amount)
-      }
-      mainAccount.balance = mainAccount.balance - createTransactionDTO.transaction_amount;
-      otherAccount.balance = otherAccount.balance + createTransactionDTO.transaction_amount;
+    if (mainAccount.balance < createTransactionDTO.transaction_amount) {
+      throw new BadRequestException('ไม่สามารถโอนเงินได้ ' + 'ยอดเงินคงเหลือ:' + mainAccount.balance +
+        ' ยอดเงินที่ต้องการโอน: ' + createTransactionDTO.transaction_amount)
     }
 
+    mainAccount.balance = mainAccount.balance - createTransactionDTO.transaction_amount;
+    otherAccount.balance = otherAccount.balance + createTransactionDTO.transaction_amount;
     this.accountsRepository.save(mainAccount);
     this.accountsRepository.save(otherAccount);
     this.transactionsRepository.save(createTransactionDTO);
@@ -76,9 +70,18 @@ export class TransactionsService {
     return this.transactionsRepository.find();
   }
 
-  async findByUserId(id: number): Promise<Transactions[]> {
+  async findByAccountId(id: number): Promise<Transactions[]> {
     return await this.transactionsRepository.find({ 
       where: [{to_account_id:id},{from_account_id:id}],
     })
   };
+
+  async accountExists(accountid: number): Promise<Boolean> {
+    const accounts = await this.accountsRepository.findOneBy({ accountid });
+    if (accounts) {
+      return true
+    } else {
+      return false;
+    }
+  }
 }

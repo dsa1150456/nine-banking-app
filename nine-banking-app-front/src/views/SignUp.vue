@@ -23,13 +23,6 @@ const createUser = async () => {
       Swal.fire("เกิดข้อผิดพลาด", "ชื่อผู้ใช้อาจจะมีคนใช้ไปแล้ว", "error");
       console.log(error);
     });
-
-  // if (res.status === 201) {
-  //   await res.json();
-  //   selected.value = "";
-  //   name.value = "";
-  //   email.value = "";
-  // } else console.log("error, cannot be added");
 };
 const checkPasswordMatch = ref(true);
 const validatePassword = () => {

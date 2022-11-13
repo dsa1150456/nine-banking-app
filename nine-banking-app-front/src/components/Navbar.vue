@@ -1,4 +1,15 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { checkData, getProfileData } from "../service/profile";
+const isLogin = checkData();
+const profile = getProfileData();
+const router = useRouter();
+const logoutFunc = () => {
+  localStorage.removeItem("profile");
+  router.go("");
+};
+</script>
 
 <template>
   <nav>
@@ -52,22 +63,32 @@
                       หน้าแรก
                     </router-link>
                   </li>
-                  <li>
+                  <li v-if="isLogin">
                     <router-link
-                      :to="{ name: 'service' }"
+                      :to="{ name: 'account' }"
                       class="duration-300 relative hover:text-[#7474fc]"
                     >
-                      ระบบ
+                      บัญชี
                     </router-link>
                   </li>
                 </ul>
-
                 <div
+                  v-if="isLogin"
+                  class="border-t py-8 px-6 md:px-12 md:py-16 lg:border-t-0 lg:border-l lg:py-0 lg:pr-0 lg:pl-6"
+                >
+                  <div
+                    @click="logoutFunc()"
+                    class="block hover:cursor-pointer px-6 py-3 hover:bg-[#a82929] rounded-full bg-[#fc7474] text-center text-white"
+                  >
+                    ออกระบบ
+                  </div>
+                </div>
+                <div
+                  v-else
                   class="login border-t py-8 px-6 md:px-12 md:py-16 lg:border-t-0 lg:border-l lg:py-0 lg:pr-0 lg:pl-6"
                 >
                   <router-link
                     :to="{ name: 'login' }"
-                    href="#"
                     class="block px-6 py-3 hover:bg-[#2929a8] rounded-full bg-[#7474fc] text-center text-white"
                   >
                     เข้าสู่ระบบ

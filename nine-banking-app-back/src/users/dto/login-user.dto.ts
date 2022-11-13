@@ -1,12 +1,9 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class CreateUserDTO {
-    @IsNotEmpty()
-    readonly userid: number;
-
+export class LoginUserDTO {
     @IsNotEmpty()
     readonly username: string;
   
     @IsNotEmpty()
-     password: string;
+    readonly password: string;
   }
