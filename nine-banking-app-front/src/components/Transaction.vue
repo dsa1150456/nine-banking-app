@@ -1,7 +1,9 @@
 <script setup>
-import Moment from "moment";
+import Moment from "moment/min/moment-with-locales";
 import { extendMoment } from "moment-range";
+import 'moment/locale/th';
 const moment = extendMoment(Moment);
+moment.locale('th')
 const props = defineProps({
   selectedAccount: {
     type: Object,
@@ -49,11 +51,11 @@ const props = defineProps({
               v-if="transaction.to_account_id != null"
               class="block mt-1  leading-tight font-normal text-black"
             >
-            <div>
-              เลขบัญชีที่โอน :{{
+            <div class="mb-1">
+              เลขบัญชีที่โอน: {{
                 transaction.from_account_id
               }}</div>
-              <div>เลขบัญชีที่ได้รับ :{{ transaction.to_account_id }}</div>
+              <div class>เลขบัญชีที่ได้รับ: {{ transaction.to_account_id }}</div>
             </p>
             <p class="mt-2 text-slate-500">
               {{ moment(transaction.transaction_time).format("LLL") }}
