@@ -22,7 +22,7 @@ export class AccountsController {
     return this.accountsService.findOne(accountid);
   }
   
-  @Get('byuser/:id')
+  @Get('byuser/:userid')
   findByUserId(@Param('userid') userid: number) {
     return this.accountsService.findByUserId(userid);
   }

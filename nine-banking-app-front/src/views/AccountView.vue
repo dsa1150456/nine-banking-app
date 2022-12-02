@@ -27,6 +27,7 @@ const getAccountDataSelected = async (accountid) => {
     });
 };
 const getAccountData = async () => {
+  console.log(profile.value.userid);
   await axios
     .get(`${config.apiUrl}/accounts/byuser/` + profile.value.userid)
     .then((response) => {
