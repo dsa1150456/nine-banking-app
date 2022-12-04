@@ -22,14 +22,20 @@ const props = defineProps({
 });
 const amount = ref();
 const toId = ref();
-const validateDecimal = () => {
+const validateAmount = () => {
   if (amount.value > 0) {
     if (/[0-9]?[0-9]?(\.[0-9][0-9]?)?/.test(amount.value)) {
       amount.value = parseFloat(amount.value).toFixed(2);
     }
+    if (amount.value > 100000) {
+      amount.value = parseFloat(100000).toFixed(2)
+    }
+  } else {
+    amount.value = 0
   }
 };
 
+const hasError = ref(false);
 </script>
 
 <template>
@@ -78,22 +84,28 @@ const validateDecimal = () => {
             <input
               type="number"
               v-model="amount"
-              @input="validateDecimal"
+              @input="validateAmount"
               placeholder="จำนวนเงิน"
               class="swal2-input"
               step="0.01"
               min="0"
+              max="100000"
               required
             />
+            <div class="text-gray-500 text-sm">
+              *จำนวนเงินสูงสุดรอบละ 100,000 บาท
+            </div>
           </div>
           <button
             v-if="props.depositMode || props.withdrawMode"
+            :disabled="!amount"
             @click="
               props.depositMode
                 ? [$emit('depositBalance', amount), $emit('closeModal')]
                 : [$emit('withdrawBalance', amount), $emit('closeModal')]
             "
             :class="{
+              'bg-gray-300 hover:bg-gray-300 cursor-not-allowed': !amount,
               'bg-green-600 hover:bg-green-400': props.depositMode,
               'bg-red-600 hover:bg-red-400': props.withdrawMode,
             }"
@@ -103,10 +115,15 @@ const validateDecimal = () => {
           </button>
           <button
             v-if="props.transferMode"
+            :disabled="!amount || !toId"
             @click="
               $emit('transferBalance', { toId: toId, amount: amount }),
                 $emit('closeModal')
             "
+            :class="{
+              'bg-gray-300 hover:bg-gray-300 cursor-not-allowed':
+                !amount || !toId,
+            }"
             class="text-white bg-sky-600 hover:bg-sky-400 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2"
           >
             โอนเงิน
